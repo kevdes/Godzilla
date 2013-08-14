@@ -1,0 +1,33 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<h2>{{ product.full_name }}</h2>
+<h4><a href="{{ product.title.client.get_absolute_url }}">{{ product.title.client }}</a></h4>
+<p><b>Type:</b> {{ product.product_type }}</p>
+<p><b>Cat number:</b> {{ product.cat_number }}</p>
+<p><b>Due Date:</b> {{ product.due_date }}</p>
+<p><b>Status:</b> {{ product.status }}</p>
+<p><a href="{% url "product-edit" product_id=product.id %}">edit</a></p>
+
+<h4>ASSETS</h4>
+
+{% if product.asset_set.all %}
+    <table class="table table-striped table-condensed">
+    <tr>
+    	<th>Name</th>
+    	<th>Type</th>
+    	<th>Status</th>
+    </tr>
+    {% for asset in product.asset_set.all %}
+    <tr>
+        <td>{{ asset.name }}</td>
+        <td>{{ asset.asset_type }}</td>
+        <td>{{ asset.status }}</td>
+    </tr>
+	{% endfor %}
+{% else %}
+    <p>No assets created.</p>
+{% endif %}
+<a>Create new assets</a>
+
+{% endblock %}
