@@ -2032,6 +2032,7 @@ table {
   border-spacing: 0;
 }
 
+
 .table {
   width: 100%;
   margin-bottom: 20px;
@@ -2042,8 +2043,15 @@ table {
   padding: 8px;
   line-height: 20px;
   text-align: left;
-  vertical-align: top;
+  vertical-align: center;
   border-top: 1px solid #dddddd;
+}
+
+th {
+  padding: 8px;
+  line-height: 20px;
+  text-align: left;
+  vertical-align: top;
 }
 
 .table th {

@@ -1,0 +1,12 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<h1>Clients</h1>
+
+<ul>
+  {% for client in object_list %}
+    <li class="client"><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
+  {% endfor %}
+</ul>
+<a href="{% url "client-new" %}">add client</a>
+{% endblock %}

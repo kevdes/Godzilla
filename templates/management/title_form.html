@@ -1,0 +1,45 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+
+<h1>{{ page_title }}</h1>
+<form action="{{ action }}" method="POST">
+	{% csrf_token %}
+	{{ form.name.id }}
+	{{form.errors}}
+	<table>
+		<tr>
+			<th>Client:</th>
+			<td>
+				{% if client %}
+					{{ client }}
+				{% elif instance %}
+				{{ instance.client }}
+				{% else %}
+				{{ form.client  }}
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<th>{{ form.name.label }}:</th>
+			<td>{{ form.name  }}</td>
+		</tr>
+		<tr>
+			<th>{{ form.job_number.label }}:</th>
+			<td>{{ form.job_number  }}</td>
+		</tr>
+	</table>
+
+	<input id="save_title" class="btn btn-primary btn-sm" type="submit" value="Save" />
+</form>
+
+{% if client %}
+	<a href="{{ client.get_absolute_url }}">back to client page</a>
+{% elif instance %}
+	<a href="{{ instance.client.get_absolute_url }}">back to client page</a>
+{% else %}
+	<a href="/management">back to main page</a>
+{% endif %}
+
+
+{% endblock %}

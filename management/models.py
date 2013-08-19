@@ -23,6 +23,7 @@ class Client(models.Model):
 class Title(models.Model):
     client = models.ForeignKey(Client)
     name = models.CharField('disc title', max_length=50)
+    job_number = models.CharField(max_length=25, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 

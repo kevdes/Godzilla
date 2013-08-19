@@ -1,0 +1,29 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<h2>{{ instance.product }}</h2>
+<h3>{{ instance.name }}</h3>
+<h4>{{ form.initial.status }}</h4>
+{{ form.errors }}
+<form action="{{ action }}" method="POST">  
+  {% csrf_token %}
+<table>  
+    {% for field in form %}
+    <tr>
+        <th>{{ field.label }}:</th><td>{{ field  }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="2">
+            <table class="table">
+                <tr>
+                    <td><a href = "{% url "asset-detail" product_id=instance.product.id asset_id=instance.id %}">Cancel</a></td>
+                    <td><input id="save_asset" class="btn btn-primary btn-sm" type="submit" value="Save"></td>        
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</form>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+{% if client.id %}
+<h1>Edit Client</h1>
+{% else %}
+<h1>Add Client</h1>
+{% endif %}
+
+<form action="{{ action }}" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input id="save_client" class="btn btn-primary btn-sm" type="submit" value="Save" />
+</form>
+
+{% if client.id %}
+<a href="{{ client.get_absolute_url }}">back to client page</a>
+{% else %}
+<a href="{% url "client-list" %}">back to client list</a>
+{% endif %}
+{% endblock %}

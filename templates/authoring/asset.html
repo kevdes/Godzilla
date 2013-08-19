@@ -1,0 +1,51 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<h2>{{ asset.product.full_name }}</h2>
+<p><a href="{{ asset.product.get_absolute_url }}?type=test">back to product page</a></p>
+<h3>{{ asset.name }}</h3>
+<p>{{ asset.asset_type }}</p>
+<p><b>Status:</b> {{ asset.status }}</p>
+
+{% if asset.assetreport_set.all %}
+    {% for assetreport in asset.assetreport_set.all %}
+    <table class="table table-bordered table-condensed">
+
+    <tr>
+        <td><h4>{{ assetreport.status }}</h4></td>
+        <td><div class="text-center">{{ assetreport.getSubmittedText }}</div>
+        </td>
+        <td><div class="text-right ">{{ assetreport.date_updated }}</div></td>
+    </tr>
+
+    {% if assetreport.isQA %}
+    <tr>
+        <td>QA Disc #{{ assetreport.disc_number|stringformat:"04d" }}</td>
+        <td>Work Order #{{ assetreport.work_order }}</td>
+        <td>{% if assetreport.response_to %}
+                Response to: {{ assetreport.response_to }}
+            {% endif %}
+            {% if assetreport.isEditable %}
+            <a href="{% url "report-edit" product_id=asset.product.id asset_id=asset.id report_id=assetreport.id %}?type=test" class="btn btn-primary btn-small">edit / submit for testing</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    
+    <tr>
+        <td colspan="3"><p><b>Submitted by:</b></p>
+        <p><b>Report:</b>
+        {% if assetreport.contents %}
+        {{ assetreport.contents }}
+        {% endif %}</p>
+        </td>
+    </tr>    
+
+    </table>
+    {% endfor %}
+    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=comment" class="btn btn-primary btn-small">Post Comment</a>
+{% else %}
+    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary">Request QA</a>
+{% endif %}
+
+{% endblock %}

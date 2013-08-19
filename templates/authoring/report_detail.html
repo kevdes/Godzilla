@@ -1,0 +1,41 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+<h2>{{ instance.product }}</h2>
+<h3>{{ instance.name }}</h3>
+asdasd
+<table class="table table-bordered table-condensed">
+
+<tr>
+    <td><h4>{{ assetreport.status }}</h4></td>
+    <td><div class="text-center">{{ assetreport.getSubmittedText }}</div>
+    </td>
+    <td><div class="text-right ">{{ assetreport.date_updated }}</div></td>
+</tr>
+<tr>
+    <td>QA Disc #{{ assetreport.disc_number|stringformat:"04d" }}</td>
+    <td>Work Order #{{ assetreport.work_order }}</td>
+    <td>{% if assetreport.response_to %}
+            Response to: {{ assetreport.response_to }}
+        {% endif %}
+    </td>
+</tr>
+
+<tr>
+    <td colspan="3"><b>Report:</b>
+    {% if assetreport.contents %}
+    {{ assetreport.contents }}
+    {% endif %}
+    </td>
+</tr>
+{% if forloop.last %}
+<tr>
+    <td colspan="3">
+    </td>
+</tr>
+{% endif %}
+
+
+</table>
+
+{% endblock %}

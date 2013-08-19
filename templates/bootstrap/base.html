@@ -21,6 +21,16 @@
     <script type="text/javascript" src="/admin/jsi18n/"></script>
     <script type="text/javascript" src="/static/admin/js/core.js"></script>
     {{ form.media }}
+    <script src="{{ STATIC_URL }}bootstrap/js/jquery-2.0.3.min.js"></script>
+
+
+    <script type="text/javascript">
+        $(function() {
+                $('#myForm tbody tr').formset({
+                prefix: '{{ formset.prefix }}'
+            });
+        })
+    </script>
     {% block extra_head %}{% endblock extra_head %}
 </head>
 
@@ -47,7 +57,7 @@
 <!-- Le javascript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="{{ STATIC_URL }}bootstrap/js/jquery.js"></script>
+
 <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
 
 {% block extra_foot %}{% endblock extra_foot %}

@@ -111,7 +111,7 @@ def editTitle(request, pk):
 		if form.is_valid():
 			# create a new item
 			title = form.save(commit=False)
-			title.client = title.client
+			client = title.client
 			title.save()
 			# Always redirect after a POST
 			return HttpResponseRedirect('/management/title/%s/' % title.id)
@@ -150,7 +150,7 @@ def editProduct(request, product_id):
 		if form.is_valid():
 			# create a new item
 			product = form.save(commit=False)
-			product.title = product.title
+			title = product.title
 			product_type = product.product_type
 			product.save()
 			# Always redirect after a POST
