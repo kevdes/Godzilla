@@ -314,8 +314,36 @@ a:focus {
 .navbar-static-top .container,
 .navbar-fixed-top .container,
 .navbar-fixed-bottom .container {
-  width: 940px;
+  width: 980px;
 }
+
+#container {
+    width:980px;
+    margin:20px auto;
+}
+
+#content {
+    float:left;
+    padding: 6px;
+    width: 770px;
+}
+
+#header {
+    padding: 12px;
+    background-color: #fafafa;
+}
+
+#sidebar {
+    float:left;
+    width:174px;
+    padding: 12px;
+    background-color: #fafafa;
+}
+
+#footer {
+    clear:both;
+}
+
 
 .span12 {
   width: 940px;
@@ -1090,7 +1118,7 @@ input,
 button,
 select,
 textarea {
-  font-family: "roboto", Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 select{

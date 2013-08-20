@@ -1,7 +1,15 @@
 {% extends "bootstrap/base.html" %}
 {% block extra_head %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.js"></script>
+    <script type="text/javascript">
+    $(function() {
+      $('#myFormset tbody tr').formset({
+        prefix: '{{ formset.prefix }}'
+      });
+    })
+  </script>
 {% endblock extra_head %}
+
 {% block content %}
 
 <h2>{{ instance.full_name }}</h2>
@@ -10,7 +18,7 @@
 <h3>{{ page_title }}</h3>
 
 {{ formset.non_form_errors.as_ul }}
-<form action="{{ action }}" method="POST" id="myForm">
+<form action="{{ action }}" method="POST" id="myFormset">
 {% csrf_token %}
 
 {% if formset.errors %}<p class="text-error">Required information missing:</p>{% endif %}
@@ -24,6 +32,7 @@
     {% endfor %}
   </tr></thead>
   {% endif %}
+
   <tr class="{% cycle row1,row2 %}">
   {% for field in form.visible_fields %}
     <td>
@@ -40,7 +49,8 @@
     </td>
   {% endfor %}
     <td>&nbsp;</td>
-  </tr>  
+  </tr>
+
 {% endfor %}
 </table><br />
 <input id="save_asset" class="btn btn-primary btn-sm" type="submit" value="Save" />

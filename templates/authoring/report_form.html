@@ -17,7 +17,12 @@
         <td colspan="2">
             <table class="table">
                 <tr>
-                    <td><a href = "{% url "asset-detail" product_id=instance.product.id asset_id=instance.id %}">Cancel</a></td>
+                    <td>
+                        {% if returnPage %}
+                            <a href = "{% url "testing-submit" %}">Cancel</a></td>
+                        {% else %}
+                            <a href = "{% url "asset-detail" product_id=instance.product.id asset_id=instance.id %}">Cancel</a></td>
+                        {% endif %}
                     <td><input id="save_asset" class="btn btn-primary btn-sm" type="submit" value="Save"></td>        
                 </tr>
             </table>

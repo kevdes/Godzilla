@@ -24,9 +24,13 @@ class AssetReporStatusAdmin(admin.ModelAdmin):
 	list_display = ('status', 'report_type', 'display_order', 'color', 'finalised')
 	ordering = ('report_type', 'display_order', )
 
+class AssetReportAdmin(admin.ModelAdmin):
+	list_display = ('asset', 'status', 'disc_number', 'submitted', 'completed',)
+	ordering = ('status', )
+
 
 admin.site.register(AssetStatus, AssetStatusAdmin)
 admin.site.register(AssetType, AssetTypeAdmin)
 admin.site.register(Asset, AssetAdmin)
-admin.site.register(AssetReport)
+admin.site.register(AssetReport, AssetReportAdmin)
 admin.site.register(AssetReportStatus, AssetReporStatusAdmin)

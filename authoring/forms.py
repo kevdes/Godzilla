@@ -61,3 +61,7 @@ class CreateBareAssetReportForm(forms.ModelForm):
 		model = AssetReport
 		exclude = ['asset', 'response_to', 'status', 'disc_number', 'completed', 'work_order', 'submitted']
 
+
+class showTesting(forms.ModelForm):
+	class Meta:
+		model = AssetReport

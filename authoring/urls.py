@@ -11,6 +11,8 @@ urlpatterns = patterns('',
 	url(r'^product/(?P<product_id>\d+)/asset/(?P<asset_id>\d+)/report/new$', views.createReport, name='report-new'),
 	url(r'^product/(?P<product_id>\d+)/asset/(?P<asset_id>\d+)/report/edit/(?P<report_id>\d+)$', views.editReport, name='report-edit'),
 	url(r'^product/(?P<product_id>\d+)/asset/(?P<asset_id>\d+)/report/(?P<report_id>\d+)$', views.report, name='report-detail'),
+	url(r'^testing/$', views.showUnsubmittedTesting, name='testing-submit'),
+	url(r'^testing/(?P<days>\d+)/$', views.showUnsubmittedTesting, name='testing-submit'),
 )
 
 

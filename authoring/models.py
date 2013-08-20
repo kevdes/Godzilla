@@ -71,7 +71,7 @@ class AssetReport(models.Model):
 	status = models.ForeignKey(AssetReportStatus)	
 	contents = models.TextField('notes', blank=True)
 	work_order = models.CharField('work order number', max_length=50, blank=True)
-	disc_number = models.IntegerField(blank=True, null=True)
+	disc_number = models.IntegerField('qa disc number', blank=True, null=True)
 	response_to = models.ForeignKey('AssetReport', blank=True, null=True)
 	submitted = models.BooleanField('submit for testing', default=False)
 	completed = models.BooleanField(default=False)

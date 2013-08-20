@@ -5,6 +5,11 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.views.generic import DetailView
 
+from django.contrib.auth.decorators import login_required
+
+from datetime import timedelta
+from django.utils import timezone
+
 from authoring.forms import AssetForm, AssetFormSet, EditAssetForm, CreateAssetReportForm, CreateBareAssetReportForm
 
 from management.models import Product
@@ -12,6 +17,7 @@ from authoring.models import Asset, AssetStatus, AssetType, AssetReport, AssetRe
 
 
 # Create your views here.
+@login_required
 def createAsset(request, product_id):
 	product = get_object_or_404(Product, pk=product_id)
 	if request.method == 'POST':
@@ -36,7 +42,7 @@ def createAsset(request, product_id):
 	context = {'page_title': 'Create Assets', 'instance': product, 'formset': formset }
 	return render(request, 'authoring/asset_formset.html', context)
 
-
+@login_required
 def editAsset(request, product_id, asset_id):
 	asset = get_object_or_404(Asset, pk=asset_id)
 	if request.method == 'POST':
@@ -56,17 +62,19 @@ def editAsset(request, product_id, asset_id):
 	context = {'page_title': 'Edit Asset', 'title': asset.name, 'form': form, 'instance': asset}
 	return render(request, 'authoring/asset_form.html', context)
 
+@login_required
 def asset(request, product_id, asset_id):  #product_id redundant?
 	asset = get_object_or_404(Asset, pk=asset_id)
 	return render(request, 'authoring/asset.html', {'asset': asset})
 
+@login_required
 def createReport(request, product_id, asset_id):
 	asset = get_object_or_404(Asset, pk=asset_id)
 	discNumber = ''
 	reportStatus = ''
 
 	if request.GET.get('type'):
-		reportType = request.GET['type']		
+		reportType = request.GET['type']
 	else:
 		reportType = 'test'	
 
@@ -78,8 +86,8 @@ def createReport(request, product_id, asset_id):
 			if form.is_valid():
 				# create a new item
 				try: 
-					discNumber = AssetReport.objects.latest('disc_number').disc_number + 1
-				except Exception:
+					discNumber = AssetReport.objects.filter(disc_number__isnull=False).latest('disc_number').disc_number + 1					
+				except AssetReport.DoesNotExist:
 					discNumber = 1
 
 				assetReport = AssetReport.objects.create(
@@ -106,11 +114,6 @@ def createReport(request, product_id, asset_id):
 			form = CreateBareAssetReportForm(request.POST)
 			if form.is_valid():
 				# create a new item
-				try: 
-					discNumber = AssetReport.objects.latest('disc_number').disc_number + 1
-				except Exception:
-					discNumber = 1
-
 				assetReport = AssetReport.objects.create(
 					asset = asset,
 					status = reportStatus,				
@@ -131,8 +134,15 @@ def createReport(request, product_id, asset_id):
 	context = {'page_title': 'Report', 'form': form, 'instance': asset}
 	return render(request, 'authoring/report_form.html', context)
 
+@login_required
 def editReport(request, product_id, asset_id, report_id):
 	assetReport = get_object_or_404(AssetReport, pk=report_id)
+
+	if request.GET.get('return'):
+		returnPage = request.GET['return']
+	else:
+		returnPage = ''	
+
 	if request.method == 'POST':
 		form = CreateAssetReportForm(request.POST, instance=assetReport)
 		if form.is_valid():
@@ -144,12 +154,29 @@ def editReport(request, product_id, asset_id, report_id):
 			submitted = form.cleaned_data['submitted']
 			assetReport.save()
 			# Always redirect after a POST
-			return HttpResponseRedirect(reverse('asset-detail', kwargs={'product_id': assetReport.asset.product.id, 'asset_id': assetReport.asset.id}))
+			if returnPage == 'testing':
+				return HttpResponseRedirect(reverse('testing-submit'))
+			else:
+				return HttpResponseRedirect(reverse('asset-detail', kwargs={'product_id': assetReport.asset.product.id, 'asset_id': assetReport.asset.id}))
 	else:        
 		form = CreateAssetReportForm(instance=assetReport)
-	context = {'page_title': 'Edit Asset Report', 'title': assetReport.asset.product_id, 'form': form, 'instance': assetReport.asset}
+	context = {'page_title': 'Edit Asset Report', 'title': assetReport.asset.product_id, 'form': form, 'instance': assetReport.asset, 'returnPage': returnPage}
 	return render(request, 'authoring/report_form.html', context)
 
+@login_required
 def report(request, product_id, asset_id, report_id):  #product_id redundant?
 	assetReport = get_object_or_404(AssetReport, pk=report_id)
 	return render(request, 'authoring/report_detail.html', {'assetreport': assetReport})	
+
+@login_required
+def showUnsubmittedTesting(request, days=5): 
+	qaRequestStatus = 1
+	days = int(days)
+
+	full_testing_list = AssetReport.objects.order_by('date_created')
+	unsubmitted_testing_list = full_testing_list.filter(status=qaRequestStatus, submitted=False)
+	pending_testing_list = full_testing_list.filter(status=qaRequestStatus, submitted=True)
+	completed_testing_list = full_testing_list.filter(status=qaRequestStatus, completed=True, date_updated__range=(timezone.now()-timedelta(days=int(days)), timezone.now()))
+
+	context = {'unsubmitted_testing_list': unsubmitted_testing_list, 'pending_testing_list': pending_testing_list, 'completed_testing_list': completed_testing_list, 'title': 'QA requests', 'days': days}
+	return render(request, 'authoring/testing.html', context)

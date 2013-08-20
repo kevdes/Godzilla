@@ -7,6 +7,7 @@ from django.views.generic import CreateView
 from django.views.generic import DetailView
 from django.views.generic import UpdateView
 
+from django.contrib.auth.decorators import login_required
 
 from management.forms import CreateTitleForm, CreateClientTitleForm
 from management.forms import CreateProductForm, EditProductForm
@@ -16,19 +17,25 @@ from management.models import Client
 from management.models import Title
 
 # Create your views here.
+@login_required
 def index(request):
 	product_list = Product.objects.all().order_by('due_date')
-	context = {'product_list': product_list}
+	completed_list = product_list.filter(status__finalised=True)
+	product_list = product_list.filter(status__finalised=False)
+	context = {'product_list': product_list, 'completed_list': completed_list}
 	return render(request, 'management/index.html', context)
 
+@login_required
 def product(request, product_id):
 	product = get_object_or_404(Product, pk=product_id)
 	return render(request, 'management/product.html', {'product': product})
 
+@login_required
 class ListClientView(ListView):
 	model = Client
 	template_name = 'client_list.html'
 
+@login_required
 class CreateClientView(CreateView):
 	model = Client
 
@@ -38,10 +45,11 @@ class CreateClientView(CreateView):
 		context['action'] = reverse('client-new')
 		return context
 
+@login_required
 class DetailClientView(DetailView):
 	model = Client
 
-
+@login_required
 class UpdateClientView(UpdateView):
 	model = Client
 
@@ -51,6 +59,7 @@ class UpdateClientView(UpdateView):
 									kwargs={'pk': self.get_object().id})
 		return context
 
+@login_required
 def createTitle(request): 
 	if request.method == 'POST':
 		form = CreateTitleForm(request.POST)
@@ -67,6 +76,7 @@ def createTitle(request):
 	context = {'page_title': 'Add Title', 'form': form}
 	return render(request, 'management/title_form.html', context)
 
+@login_required
 def createTitleClient(request, client_id):  # from client ID
 	client = get_object_or_404(Client, pk=client_id)
 	if request.method == 'POST':
@@ -85,10 +95,11 @@ def createTitleClient(request, client_id):  # from client ID
 	return render(request, 'management/title_form.html', context)
 
 
-
+@login_required
 class DetailTitleView(DetailView):
 	model = Title
 
+@login_required
 class UpdateTitleView(UpdateView):
 	model = Title
    
@@ -102,7 +113,7 @@ class UpdateTitleView(UpdateView):
 									kwargs={'pk': self.get_object().id})
 		return context
 
-
+@login_required
 def editTitle(request, pk):
 	title = Title.objects.get(pk=pk)
 
@@ -121,6 +132,7 @@ def editTitle(request, pk):
 	context = {'page_title': 'Edit Title', 'instance': title, 'form': form}
 	return render(request, 'management/title_form.html', context)
 
+@login_required
 def createProduct(request, title_id):  # requires a title_id
 	title = get_object_or_404(Title, pk=title_id)
 	if request.method == 'POST':
@@ -142,7 +154,7 @@ def createProduct(request, title_id):  # requires a title_id
 	context = {'page_title': 'Add Product', 'title': title, 'form': form, 'instance': title}
 	return render(request, 'management/product_form.html', context)
 
-
+@login_required
 def editProduct(request, product_id): 
 	product = get_object_or_404(Product, pk=product_id)
 	if request.method == 'POST':

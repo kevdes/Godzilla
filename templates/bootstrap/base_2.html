@@ -28,14 +28,10 @@
 
 <body {% block extra_body %}{% endblock extra_body %}>
 
+{% block nav %}{% endblock nav %}
 
-<div id="container">
-    <div id="header">
-        {% block nav %}{% endblock nav %}
-        <a href="/management/">HOME</a> | <a href="/authoring/testing/">TESTING</a> | <a href="">QA</a>
-    </div>
-    
-    <div id="content">
+<div class="container">
+    <div class="row">
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-success">
@@ -47,23 +43,8 @@
         {% endif %}
         {% block content %}{% endblock content %}
     </div>
-    
-    <div id="sidebar">
-        {% if user.is_authenticated %}
-        Logged in as:<br />
-        <b>{{ user.username }}</b>
-        <br /><a href="/logout/">Logout</a>
-        {% else %}
-        <a href="{% url "login" %}">Login</a>
-        {% endif %}
-    </div>
-    
-    <div id="footer">
-        {% block extra_foot %}{% endblock extra_foot %}
-    </div>
-</div>
 
-<!-- /container -->
+</div> <!-- /container -->
 
 <!-- Le javascript
 ================================================== -->
@@ -71,6 +52,6 @@
 
 <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
 
-
+{% block extra_foot %}{% endblock extra_foot %}
 </body>
 </html>

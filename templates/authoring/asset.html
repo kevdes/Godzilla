@@ -4,6 +4,7 @@
 <h2>{{ asset.product.full_name }}</h2>
 <p><a href="{{ asset.product.get_absolute_url }}?type=test">back to product page</a></p>
 <h3>{{ asset.name }}</h3>
+<p><a href="{% url "asset-edit" product_id=asset.product.id asset_id=asset.id %}">edit</a></p>
 <p>{{ asset.asset_type }}</p>
 <p><b>Status:</b> {{ asset.status }}</p>
 
@@ -43,9 +44,7 @@
 
     </table>
     {% endfor %}
-    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=comment" class="btn btn-primary btn-small">Post Comment</a>
-{% else %}
-    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary">Request QA</a>
 {% endif %}
-
+    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary btn-small">Request QA</a>
+    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=comment" class="btn btn-primary btn-small">Post Comment</a>
 {% endblock %}

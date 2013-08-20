@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     'south',
+    'accounts',
     'bootstrap',
     'fontawesome',
     # Uncomment the next line to enable admin documentation:
@@ -162,3 +163,5 @@ LOGGING = {
         },
     }
 }
+
+LOGIN_URL = '/login/'
