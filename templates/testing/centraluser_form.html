@@ -1,0 +1,22 @@
+{% extends "bootstrap/base.html" %}
+
+{% block content %}
+{% if instance %}
+<h1>{{ title }}</h1>
+{% else %}
+<h1>Create new Central User</h1>
+{% endif %}
+
+<form action="{{ action }}" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  
+<div class="form-actions">
+	<a href="{% url "testing-list" %}" class="btn" btn-sm>Cancel</a>
+	<input id="save_user" class="btn btn-primary btn-sm" type="submit" value="Save" />
+</div>
+
+</form>
+
+
+{% endblock %}

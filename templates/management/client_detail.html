@@ -3,25 +3,52 @@
 {% block content %}
 
 <h1>{{ client }}</h1>
-<p><a href="{% url "client-edit" pk=client.id %}">edit</a></p>
 
-<p>Contact name: {{ client.contact_name }}</p>
-<p>Email: {{ client.contact_email }}</p>
+<table class="headingtable">
+<tr>
+    <td><h2>Titles</h2></td>
+    <td><div class='text-right'><a href="{% url "title-new-client" client_id=client.id %}" class="btn btn-primary">add new title</a></div></td>
+</tr>
+</table>
 
 
 
-<a href="{% url "client-list" %}">back to client list</a>
-
-<h3>Titles</h3>
-<a href="{% url "title-new-client" client_id=client.id %}" class="btn btn-primary btn-xs">add new title</a>
 {% for title in client.title_set.all %}
-<h4>{{ title.name }}</h4>
-	<p><b>Job number:</b> {{ title.job_number }}</p>
-	<a href="{% url "title-edit" pk=title.id %}">edit title</a></p>
-	<p><a href="{% url "product-new" title_id=title.id %}">add new product</a></p>
+
+<table class="table table-bordered table-striped table-condensed">
+	<tr>
+		<td class="span4" colspan="2"><h4>{{ title.name }}</h4></td>
+		<td class="span3"><b>Job number:</b> {{ title.job_number }}</td>
+		<td class="span2"><a href="{% url "title-edit" pk=title.id %}" class="btn btn-small">edit title</a></td>
+	<tr>
 	{% for product in title.product_set.all %}
-	<p><a href="{% url "product-detail" product_id=product.id %}">{{ product.full_name }}</a></p>
+	<tr>
+        <td class="span1">{{ product.product_type }}</td>
+        <td class="span4"><a href="{% url "product-detail" product_id=product.id %}">{{ product.title }} {{ product.name }}</a></td>                
+        <td class="span3"><span class="{{ product.date_status }}"><b>Due:</b> {{ product.due_date }}</span></td>
+        <td {% if product.status.color %}class='{{ product.status.color }}'{% endif %}>{{ product.status }}</td>
+	</tr>
 	{% endfor %}
+	<tr>
+		<td colspan="4"><a href="{% url "product-new" title_id=title.id %}" class="btn btn-primary btn-small">add new product</a></td>
+	</tr>
+</table>
+
+
+
+
+	
 {% endfor %}
 
+{% endblock %}
+
+{% block side_bar %}
+<div class="headerbox">
+    <h2><small>{{ client }}</small></h2>
+</div>
+<div class="rectanglebox">
+    <p><b>Contact:</b><br />{{ client.contact_name }}</p>
+    <p><b>Email:</b> {{ client.contact_email }}</p>
+    <p><a class="btn btn-small" href="{% url "client-edit" pk=client.id %}">Edit Client details</a></p>
+</div>
 {% endblock %}

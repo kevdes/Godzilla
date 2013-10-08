@@ -10,12 +10,17 @@
 <form action="{{ action }}" method="POST">
   {% csrf_token %}
   {{ form.as_p }}
-  <input id="save_client" class="btn btn-primary btn-sm" type="submit" value="Save" />
+  
+<div class="form-actions">
+	{% if client.id %}
+		<a href="{{ client.get_absolute_url }}" class="btn" btn-sm>Back to client page</a>
+	{% else %}
+		<a href="{% url "client-list" %}" class="btn" btn-sm>Back to client list</a>
+	{% endif %}
+	<input id="save_client" class="btn btn-primary btn-sm" type="submit" value="Save" />
+</div>
+
 </form>
 
-{% if client.id %}
-<a href="{{ client.get_absolute_url }}">back to client page</a>
-{% else %}
-<a href="{% url "client-list" %}">back to client list</a>
-{% endif %}
+
 {% endblock %}

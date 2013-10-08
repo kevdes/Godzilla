@@ -12,10 +12,13 @@
 
 	{{ form.as_p }}
 
+<div class="form-actions">
+	<a href="{{ instance.get_absolute_url }}" class="btn" btn-sm>Cancel</a>
 	<input id="save_product" class="btn btn-primary btn-sm" type="submit" value="Save" />
-</form>
+</div>
 
-<a href="{{ instance.get_absolute_url }}">cancel</a>
+	
+</form>
 
 
 {% endblock %}

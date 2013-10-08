@@ -1,0 +1,43 @@
+
+.container,
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+  width: 980px;
+}
+
+#container {
+    width:980px;
+    margin:20px auto;
+}
+
+#content {
+    float:left;
+    padding: 6px;
+    width: 770px;
+}
+
+#header {
+    padding: 12px;
+    background-color: #fafafa;
+}
+
+#sidebar {
+    float:left;
+    width:180px;
+    padding: 2px 4px 4px 4px;
+    background-color: #026108;
+    margin: 10px 0px 0px 10px;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+  outline: none;
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding-box;
+          background-clip: padding-box;    
+}
+
+#footer {
+    clear:both;
+}
+

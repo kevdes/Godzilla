@@ -21,7 +21,7 @@
         <td><a href="{% url "asset-detail" product_id=assetreport.asset.product.id asset_id=assetreport.asset.id %}">{{ assetreport.asset }}</a></td>
         <td>{{ assetreport.disc_number|stringformat:"04d" }}</td>
         <td>{{ assetreport.date_created|date:"M d, P"}}</td>
-        <td><a href="{% url "report-edit" product_id=assetreport.asset.product.id asset_id=assetreport.asset.id report_id=assetreport.id %}?type=test&return=testing">Submit for testing</a></td>
+        <td><a href="{% url "report-edit" product_id=assetreport.asset.product.id asset_id=assetreport.asset.id report_id=assetreport.id %}?type=test&return=testing" class="btn btn-primary btn-mini">Submit for testing</a></td>
     </tr>
 	{% endfor %}
 	</tbody>
@@ -59,8 +59,38 @@
     <p>No QA requests pending.</p>
 {% endif %}
 
+<h2>QA Requests Postponed</h2>
+{% if progress_list %}
+    <table class="table table-striped table-condensed">
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Asset</th>
+        <th>QA Disc #</th>
+        <th>Work Order #</th>
+        <th>Date Submitted</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for assetreport in progress_list.all %}
+    <tr>
+        <td><a href="{% url "product-detail" product_id=assetreport.asset.product.id %}">{{ assetreport.asset.product }}</a></td>
+        <td><a href="{% url "asset-detail" product_id=assetreport.asset.product.id asset_id=assetreport.asset.id %}">{{ assetreport.asset }}</a></td>
+        <td>{{ assetreport.disc_number|stringformat:"04d" }}</td>
+        <td>{{ assetreport.work_order }}</td>
+        <td>{{ assetreport.date_updated|date:"M d, P" }}</td>
+        <td></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>No QA requests pending.</p>
+{% endif %}
+
 <h2>Recently Completed QA's</h2>
 {% if completed_testing_list %}
+    <p>QA's completed in the last <b>{{days}}</b> days.</p>
     <table class="table table-striped table-condensed">
     <thead>
     <tr>
@@ -79,13 +109,13 @@
         <td>{{ assetreport.disc_number|stringformat:"04d" }}</td>
         <td>{{ assetreport.work_order }}</td>
         <td>{{ assetreport.date_updated|date:"M d, P" }}</td>
-        <td>View Report</td>
+        <td><a href="{% url "asset-detail" product_id=assetreport.asset.product.id asset_id=assetreport.asset.id %}#{{ assetreport.id }}" class="btn btn-primary btn-mini">View Report</a></td>
     </tr>
     {% endfor %}
     </tbody>
 </table>
 {% else %}
-    <p>No QA's completed in the last {{days}} days.</p>
+    <p>No QA's completed in the last <b>{{days}}</b> days.</p>
 {% endif %}
 
 {% endblock %}

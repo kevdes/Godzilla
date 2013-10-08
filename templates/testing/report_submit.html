@@ -1,0 +1,26 @@
+{% extends "bootstrap/base_testing.html" %}
+
+{% block content %}
+<h1>{{title}}</h1>
+
+{% if isSubmitted %}
+
+<div class="alert alert-success">	
+  QA report emailled to:
+  <ul>
+	{% for email in email_list %}
+	    <li>{{ email }}</li>
+	{% endfor %}
+	</ul>
+
+</div>
+{% else %}
+	<div class="alert alert-warning">	
+	  QA postponed to be completed later
+	</div>
+{% endif %}
+
+<a href="{% url "testing-list" %}">Return to testing page</a>
+
+
+{% endblock %}

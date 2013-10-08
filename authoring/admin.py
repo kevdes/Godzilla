@@ -5,6 +5,10 @@ from authoring.models import AssetType
 from authoring.models import Asset
 from authoring.models import AssetReport
 from authoring.models import AssetReportStatus
+from authoring.models import ActionButton
+from authoring.models import ReportResponseStatus
+from authoring.models import ReportItemResponse
+
 
 
 class AssetTypeAdmin(admin.ModelAdmin):
@@ -25,7 +29,7 @@ class AssetReporStatusAdmin(admin.ModelAdmin):
 	ordering = ('report_type', 'display_order', )
 
 class AssetReportAdmin(admin.ModelAdmin):
-	list_display = ('asset', 'status', 'disc_number', 'submitted', 'completed',)
+	list_display = ('asset', 'status', 'disc_number', 'submitted', 'completed', 'date_created', 'date_updated',)
 	ordering = ('status', )
 
 
@@ -34,3 +38,6 @@ admin.site.register(AssetType, AssetTypeAdmin)
 admin.site.register(Asset, AssetAdmin)
 admin.site.register(AssetReport, AssetReportAdmin)
 admin.site.register(AssetReportStatus, AssetReporStatusAdmin)
+admin.site.register(ActionButton)
+admin.site.register(ReportResponseStatus)
+admin.site.register(ReportItemResponse)

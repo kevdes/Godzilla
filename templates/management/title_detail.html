@@ -1,14 +1,48 @@
 {% extends "bootstrap/base.html" %}
 
+
+{% load breadcrumbs %}
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+    {% breadcrumb_url title.client "client-detail" title.client.id %}
+    </ul>  
+{% endblock %}
+
 {% block content %}
 
-<a href="{{ title.client.get_absolute_url }}">{{ title.client.name }}</a>
 <h1>{{ title.name }}</h1>
-<p>Job number: {{ title.job_number }}</[>
 
-{% for product in title.product_set.all %}
-<p><a href="{% url "product-detail" product_id=product.id %}">{{ product.full_name }}</a></p>
-{% endfor %}
+<table class="headingtable">
+<tr>
+    <td><h3>Products:</h3></td>
+    <td><div class='text-right'><a class="btn btn-primary" href="{% url "product-new" title_id=title.id %}">Create new Product</a></div></td>
+</tr>
+</table>
 
-<a href="{% url "product-new" title_id=title.id %}">Add new Product</a>
+
+
+<table class="table table-bordered table-striped table-condensed">
+	{% for product in title.product_set.all %}
+	<tr>
+        <td class="span1">{{ product.product_type }}</td>
+        <td class="span4"><a href="{% url "product-detail" product_id=product.id %}">{{ product.title }} {{ product.name }}</a></td>                
+        <td class="span3"><b>Due:</b> {{ product.due_date }}</td>
+        <td {% if product.status.color %}class='{{ product.status.color }}'{% endif %}>{{ product.status }}</td>
+	</tr>
+	{% endfor %}
+</table>
+
+
+
+
+{% endblock %}
+
+{% block side_bar %}
+<div class="headerbox">
+    <h2><small>{{ title.name }}</small></h2>
+</div>
+<div class="rectanglebox">
+    <p><b>Job number:</b> {{ title.job_number }}</p>
+    <a href="{% url "title-edit" pk=title.id %}" class="btn btn-small">Edit title</a>
+</div>
 {% endblock %}

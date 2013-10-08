@@ -5,30 +5,27 @@
 <h3>{{ instance.name }}</h3>
 <h4>{{ form.initial.status }}</h4>
 {{ form.errors }}
-<form action="{{ action }}" method="POST">  
+<form action="{{ action }}" method="POST" class="form-horizontal">
   {% csrf_token %}
-<table>  
+  
     {% for field in form %}
-    <tr>
-        <th>{{ field.label }}:</th><td>{{ field  }}</td>
-    </tr>
+    <div class="control-group">
+        
+        <label for="{{ field.auto_id }}" class="control-label">{{ field.label|safe }}:</label>
+
+        <div class="controls">{{ field }}</div>
+    </div>
     {% endfor %}
-    <tr>
-        <td colspan="2">
-            <table class="table">
-                <tr>
-                    <td>
-                        {% if returnPage %}
-                            <a href = "{% url "testing-submit" %}">Cancel</a></td>
+
+<div class="form-actions">
+  {% if returnPage %}
+                            <a href = "{% url "testing-submit" %}" class="btn btn-sm">Cancel</a></td>
                         {% else %}
-                            <a href = "{% url "asset-detail" product_id=instance.product.id asset_id=instance.id %}">Cancel</a></td>
+                            <a href = "{% url "asset-detail" product_id=instance.product.id asset_id=instance.id %}" class="btn btn-sm">Cancel</a></td>
                         {% endif %}
-                    <td><input id="save_asset" class="btn btn-primary btn-sm" type="submit" value="Save"></td>        
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+  <input id="save_asset" class="btn btn-primary btn-sm"  type="submit" value="Save"/>
+</div>
+
 </form>
 
 {% endblock %}

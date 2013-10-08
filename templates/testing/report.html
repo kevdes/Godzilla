@@ -1,0 +1,127 @@
+{% extends "bootstrap/base_testing.html" %}
+
+
+{% block extra_head %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.formset.js"></script>
+    <script type="text/javascript">
+    $(function() {
+      $('#myFormset tbody tr').formset({
+        prefix: '{{ formset.prefix }}'
+      });
+    })
+  </script>
+{% endblock extra_head %}
+
+
+{% block content %}
+<h1>{{title}}</h1>
+
+<h2>{{ qaRequest.asset.product }}</h2>
+<h3>{{ qaRequest.asset }}</h3>
+
+
+<!-- 
+<div class="panel panel-primary">
+  <div class="panel-heading">QA Notes:</div>
+  <div class="panel-body">
+    {{ qaRequest.contents }}
+  </div>
+</div>
+
+
+
+{% if qaItems %}
+  <h3>Previous comments:</h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>  
+        <th class="span1">Submitted by:</th>
+        <th class="span3">Comment</th>
+        <th class="span1">Severity</th>
+        <th class="span2">Date submitted</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in qaItems %}
+      <tr>  
+        <td>{{ item.cer_user }}</td>
+        <td>{{ item.comment|linebreaks }}</td>
+        <td>{{ item.severity }}</td>
+        <td>{{ item.date_created|date:"D d M, P" }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+-->
+  <h3>Continue QA:</h3>
+{% endif %}
+<form action="{{ action }}" method="POST" id="myFormset">
+{% csrf_token %}
+{% if formset.errors %}<p class="text-error">Required information missing:</p>{% endif %}
+
+{{ form_errors }}
+{{ user_form }}
+
+<table id="formset" class="table-striped">
+
+{% for form in formset.forms %}
+  {% if forloop.first %}
+  <thead><tr>
+    {% for field in form.visible_fields %}
+    <th>{{ field.label|capfirst }}</th>
+    {% endfor %}
+  </tr></thead>
+  {% endif %}
+
+  <tr>
+  {% for field in form.visible_fields %}
+    <td>
+    {# Include the hidden fields in the form #}
+    {% if forloop.first %}
+      {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+      {% endfor %}
+    {% endif %}
+      {%if field.errors %}<span class="control-group error">{{ field }}</span>
+      {% else %}
+        {{ field }}
+      {%endif%}
+    </td>
+  {% endfor %}
+    <td class="hide">&nbsp;</td>
+  </tr>
+
+{% endfor %}
+</table>
+<table class="table">
+  <thead>
+    <tr>
+        <td colspan="2">
+        <div class="pull-left"></div>
+        <div class="pull-right">
+              <input name="report_postpone" class="btn btn-default" type="submit" value="Save and continue later" />&nbsp;&nbsp;&nbsp;
+              <input name="report_save" class="btn btn-primary" type="submit" value="Submit Report" />
+        </div>
+    </td>
+    </tr>
+    </thead>
+ </table>   
+
+{{formset.management_form}}
+</form>
+
+
+
+{% endblock %}
+
+{% block side_bar %}
+<div class="headerbox">
+    <h2><small>QA Details:</small></h2>
+</div>
+<div class="rectanglebox">
+    <p><b>Asset type: </b>{{ qaRequest.asset.product.product_type }}</p>
+    <p><b>Asset: </b> {{ qaRequest.asset }}</p>
+    <p><b>Work order: </b>{{ qaRequest.work_order }}</p>
+    <p><b>Disc number: </b>{{ qaRequest.disc_number|stringformat:"04d" }}</p>
+</div>
+{% endblock %}

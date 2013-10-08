@@ -8,5 +8,6 @@
     <li class="client"><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
   {% endfor %}
 </ul>
-<a href="{% url "client-new" %}">add client</a>
+
+<p><a class="btn btn-primary btn-small " href="{% url "client-new" %}">Add a Client</a></p>
 {% endblock %}

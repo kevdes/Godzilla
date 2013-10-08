@@ -29,7 +29,7 @@ $(document).ready(function() {
         <td>{{ product.product_type }}</td>
         <td><a href="{% url "product-detail" product_id=product.id %}">{{ product.title }} {{ product.name }}</a></td>                
         <td>{{ product.title.client }}</td>
-        <td>{{ product.due_date }}</td>
+        <td><span class="{{ product.date_status }}">{{ product.due_date }}</span></td>
         <td {% if product.status.color %}class='{{ product.status.color }}'{% endif %}>{{ product.status }}</td>
     {% endfor %}
     </tbody>   

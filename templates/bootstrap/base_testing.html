@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"{% block extra_html %}{% endblock extra_html %}>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <!--  <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />  -->
+    <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom.css" />
+    <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}fontawesome/css/font-awesome.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script type="text/javascript">window.__admin_media_prefix__ = "/static/admin/";</script>
+    <script type="text/javascript" src="/admin/jsi18n/"></script>
+    <script type="text/javascript" src="/static/admin/js/core.js"></script>
+    {{ form.media }}
+    <script src="{{ STATIC_URL }}bootstrap/js/jquery-2.0.3.min.js"></script>
+
+    {% block extra_head %}{% endblock extra_head %}
+</head>
+
+<body {% block extra_body %}{% endblock extra_body %}>
+
+<div id="container">
+
+    <div class='navbar navbar-inverse'>
+      <div class='navbar-inner nav-collapse' style="height: auto;">
+        <a class="brand" href="/">godzilla</a>
+                <ul class="nav">
+                  <li class="active"><a href="/testing/">TESTING LIST</a></li>
+                  <li class="divider-vertical"></li>
+                </ul>
+        </div>
+    </div>
+    <div id="content">
+
+        {% block breadcrumbs %}{% endblock breadcrumbs %}
+
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success">
+            <a class="close" data-dismiss="alert">×</a>
+            <h4 class="alert-heading">{{ message.tags }}</h4>
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock content %}
+    </div>
+    
+    <div id="sidebar">      
+        {% block side_bar %}{% endblock side_bar %}
+    </div>
+    
+    <div id="footer">
+        {% block extra_foot %}{% endblock extra_foot %}
+    </div>
+</div>
+
+<!-- /container -->
+
+<!-- Le javascript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+<script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+
+
+</body>
+</html>

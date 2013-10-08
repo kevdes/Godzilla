@@ -10,6 +10,8 @@
     <!-- Le styles -->
     <!--  <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />  -->
     <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/custom.css" />
     <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}fontawesome/css/font-awesome.css" rel="stylesheet">
@@ -28,14 +30,34 @@
 
 <body {% block extra_body %}{% endblock extra_body %}>
 
-
 <div id="container">
-    <div id="header">
-        {% block nav %}{% endblock nav %}
-        <a href="/management/">HOME</a> | <a href="/authoring/testing/">TESTING</a> | <a href="">QA</a>
+
+    <div class='navbar navbar-inverse'>
+      <div class='navbar-inner nav-collapse' style="height: auto;">
+        <a class="brand" href="/">godzilla</a>
+                <ul class="nav">
+                  <li class="active"><a href="/management/">HOME</a></li>
+                  <li class="divider-vertical"></li>
+                  <li><a href="/authoring/testing/">TESTING</a></li>
+                  <li class="divider-vertical"></li>
+                  <li><a href="{% url "client-list" %}">CLIENTS</a></li>
+
+                </ul>
+             <div class="pull-right login-blurb">
+                <i class="icon-user icon-white"></i> &nbsp;
+                {% if user.is_authenticated %}
+                    Logged in as: <b>{{ user.username }}</b><span class="navbar-link">&nbsp; | &nbsp;</span><a href="/logout/">Logout</a>
+                    {% else %}
+                    <a href="{% url "login" %}">Login</a>
+                    {% endif %}
+              </div>
+        </div>
     </div>
-    
     <div id="content">
+
+        {% block breadcrumbs %}{% endblock breadcrumbs %}
+
+
         {% if messages %}
         {% for message in messages %}
         <div class="alert alert-success">
@@ -48,14 +70,8 @@
         {% block content %}{% endblock content %}
     </div>
     
-    <div id="sidebar">
-        {% if user.is_authenticated %}
-        Logged in as:<br />
-        <b>{{ user.username }}</b>
-        <br /><a href="/logout/">Logout</a>
-        {% else %}
-        <a href="{% url "login" %}">Login</a>
-        {% endif %}
+    <div id="sidebar">      
+        {% block side_bar %}{% endblock side_bar %}
     </div>
     
     <div id="footer">

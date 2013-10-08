@@ -1,50 +1,202 @@
 {% extends "bootstrap/base.html" %}
+{% load url from future %}
+{% block extra_head %}
+<script type='text/javascript'>//<![CDATA[ 
+$(window).load(function(){
+boxid = window.location.hash;
+jQuery.fn.highlight = function() {
+    $(this).each(function() {
+        var el = $(this);
+        el.before("<div/>")
+        el.prev()
+            .width(el.width())
+            .height(el.height())
+            .css({
+                "position": "absolute",
+                "background-color": "#ffff99",
+                "opacity": ".7"   
+            })
+            .fadeOut(1000);
+    });
+}
+    
+$(boxid).highlight();
+
+});//]]>  
+
+</script>
+{% endblock extra_head %}
+
+
+{% load breadcrumbs %}
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+    {% breadcrumb_url asset.product.title.client "client-detail" asset.product.title.client.id %}
+    {% breadcrumb_url asset.product.title "title-detail" asset.product.title.id %}
+    {% breadcrumb_url asset.product "product-detail" asset.product.id %}
+    </ul>  
+{% endblock %}
 
 {% block content %}
-<h2>{{ asset.product.full_name }}</h2>
-<p><a href="{{ asset.product.get_absolute_url }}?type=test">back to product page</a></p>
+
+<h2>{{ asset.product }}</h2>
 <h3>{{ asset.name }}</h3>
-<p><a href="{% url "asset-edit" product_id=asset.product.id asset_id=asset.id %}">edit</a></p>
-<p>{{ asset.asset_type }}</p>
-<p><b>Status:</b> {{ asset.status }}</p>
 
-{% if asset.assetreport_set.all %}
-    {% for assetreport in asset.assetreport_set.all %}
-    <table class="table table-bordered table-condensed">
-
+{% if asset.getParentReports %}
+    {% for assetreport in asset.getParentReports %}
+    <a name="{{assetreport.id}}"/></a>
+    <div id="{{assetreport.id}}">
+    <table class="table table-bordered table-condensed reporttable-main">
     <tr>
-        <td><h4>{{ assetreport.status }}</h4></td>
-        <td><div class="text-center">{{ assetreport.getSubmittedText }}</div>
-        </td>
-        <td><div class="text-right ">{{ assetreport.date_updated }}</div></td>
+        <td class="span3"><h4>{{ assetreport.status }}</h4></td>
+        <td class="span2"><div class="text-center">{{ assetreport.getSubmittedText }}</div></td>
+        <td class="span3"><div class="text-right">{{ assetreport.date_updated }}</div>
+            <div class="text-right"><b>Created by:</b> {{ assetreport.full_created_by }}</div></td>
     </tr>
 
-    {% if assetreport.isQA %}
+    {% if assetreport.isQARequest %}
     <tr>
         <td>QA Disc #{{ assetreport.disc_number|stringformat:"04d" }}</td>
         <td>Work Order #{{ assetreport.work_order }}</td>
-        <td>{% if assetreport.response_to %}
+        <td><div class="text-right"><!-- {% if assetreport.response_to %}
                 Response to: {{ assetreport.response_to }}
-            {% endif %}
+            {% endif %} -->
             {% if assetreport.isEditable %}
             <a href="{% url "report-edit" product_id=asset.product.id asset_id=asset.id report_id=assetreport.id %}?type=test" class="btn btn-primary btn-small">edit / submit for testing</a>
             {% endif %}
+        </div>
         </td>
     </tr>
     {% endif %}
     
     <tr>
-        <td colspan="3"><p><b>Submitted by:</b></p>
-        <p><b>Report:</b>
-        {% if assetreport.contents %}
+        <td colspan="3">
+
+
+        <p><b>Submitted by:</b> {{ assetreport.full_submitted_by }} ({{ assetreport.submitted_by.username }})</p>
+        <p><b>Notes:</b>
         {{ assetreport.contents }}
-        {% endif %}</p>
+
+
+    </tr>
+    {% if assetreport.getChildren %}
+    <tr>
+        <td colspan="3">
+
+        {% for childreport in assetreport.getChildren %}
+        <a name="{{childreport.id}}"/></a>
+        <div id="{{childreport.id}}">
+            <table class="table table-bordered table-condensed reporttable-{{ childreport.getReportCSS }}">
+            <tr>
+                <td class="span3"><h4>{{ childreport.status }}</h4></td>
+                <td class="span2"><div class="text-center reporttext-{{ childreport.getReportCSS }}">{{ childreport.getReportStatus }}</div></td>
+                <td class="span3"><div class="text-right">{{ childreport.date_updated }}</div>
+                    <div class="text-right">{% if childreport.full_created_by %}<b>Created by:</b> {{ childreport.full_created_by }}{% endif %}</div></td>
+            </tr>
+            </tr>
+
+
+            <tr>
+                <td colspan="3">
+                    {% for item in childreport.reportItems %}
+                        <table class="table qa-table-bordered table-condensed">
+
+                            <tr>
+                                <td colspan="3" class="qa_item">QA ITEM:</td>
+                            </tr>
+                        <tr>
+                            <td class="span2">{{ item.cer_user }}</td>
+                            <td class="span3">{{ item.date_created }}</td>
+                            <td class="span2"><div class="text-center"><span class="label label-{{ item.severity.color }}">{{ item.severity }}</span></div></td>
+                        </tr>
+                        <tr>                
+                            <td colspan="3">                                
+                                {{ item.comment|linebreaks }}</td>
+                        </tr>
+
+
+                        <tr>
+                            <td colspan="3" class="author_response">AUTHOR RESPONSE:</td>
+                        </tr>
+                        {% if item.response_comment %}
+                        <tr>
+                            <td class="span2">{{ item.response_user.first_name }} {{ item.response_user.last_name }}</td>
+                            <td class="span3">{{ item.response_date }}</td>
+                            <td class="span2"><div class="text-center"><span class="label label-{{ item.response_status.color }}">{{ item.response_status }}</span></div></td>
+                        </tr>
+
+                        <tr>
+
+                            <td colspan="3">{{ item.response_comment }}</td>
+                        <tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="important">No authoring response</td>
+                        </tr>
+                        {% endif %}
+   
+
+                        </table>
+                    {% endfor %}
+
+                    {% if forloop.last %}
+                        {% if childreport.completed = False %}
+                        <tr>
+                            <td colspan="3">
+                            <div class="text-right">
+                        {% for actionbutton in childreport.status.actionbutton_set.all  %}  
+                            {% if actionbutton.action  %}
+                                    <a href="{% url actionbutton.action report_id=childreport.id %}" class="btn btn-small {% if actionbutton.color %}btn-{{actionbutton.color}}{% endif %}">
+                                        {{ actionbutton }}      
+                                    </a>
+                            {% endif %}                            
+                        {% endfor %}
+                            </div>
+                            </td>
+                        </tr>
+                       {% endif %}    
+                  {% endif %}
+
+                </table>
+
+                 </td>
+            </tr>
+
+        {% endfor %}
         </td>
     </tr>    
 
+    {% endif %}
+<!--
+    {% if assetreport.isQAReport %}
+    <tr>
+        <td colspan="3">
+            <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary btn-small">Respond to QA</a>
+            <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary btn-small">Request QA</a>
+            <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary btn-small">Request QA</a></td>
+    </tr>    
+    {% endif %}
+-->
     </table>
+    </div>
     {% endfor %}
 {% endif %}
-    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary btn-small">Request QA</a>
-    <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=comment" class="btn btn-primary btn-small">Post Comment</a>
+    {% if not asset.awaitingQA %}
+        <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=test" class="btn btn-primary btn-small">Request QA</a>
+        <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=comment" class="btn btn-primary btn-small">Post Comment</a>
+    {% else%}
+        <a href="{% url "report-new" product_id=asset.product.id asset_id=asset.id %}?type=comment" class="btn btn-primary btn-small">Post Comment</a>
+{% endif %}    
+
+{% endblock %}
+
+{% block side_bar %}
+<div class="headerbox">
+    <h2><small>{{ asset.name }}</small></h2>
+</div>
+<div class="rectanglebox">
+    <p><b>Type:</b> {{ asset.asset_type }}</p>
+    <p><b>Status:</b> {{ asset.status }}</p>
+    <p><a class="btn btn-small" href="{% url "asset-edit" product_id=asset.product.id asset_id=asset.id %}">Edit asset details</a></p>
+</div>
 {% endblock %}

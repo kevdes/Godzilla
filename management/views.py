@@ -7,7 +7,13 @@ from django.views.generic import CreateView
 from django.views.generic import DetailView
 from django.views.generic import UpdateView
 
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+
+from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login, logout as auth_logout, get_user_model
 
 from management.forms import CreateTitleForm, CreateClientTitleForm
 from management.forms import CreateProductForm, EditProductForm
@@ -17,6 +23,25 @@ from management.models import Client
 from management.models import Title
 
 # Create your views here.
+
+@sensitive_post_parameters()
+@csrf_protect
+@never_cache
+def loginPage(request, authentication_form=AuthenticationForm, *args, **kwargs):
+	redirect_to = request.REQUEST.get('next', '')
+
+	if request.POST:
+		form = authentication_form(request, data=request.POST)
+		if form.is_valid():
+			auth_login(request, form.get_user())
+			print redirect_to
+			return HttpResponseRedirect(redirect_to)
+			return HttpResponseRedirect(reverse('index'))
+	else:
+		form = authentication_form(request)
+	context = {'page_title': 'Report', 'form': form}
+	return render(request, 'management/login.html', context)
+
 @login_required
 def index(request):
 	product_list = Product.objects.all().order_by('due_date')
@@ -30,12 +55,11 @@ def product(request, product_id):
 	product = get_object_or_404(Product, pk=product_id)
 	return render(request, 'management/product.html', {'product': product})
 
-@login_required
+
 class ListClientView(ListView):
 	model = Client
 	template_name = 'client_list.html'
 
-@login_required
 class CreateClientView(CreateView):
 	model = Client
 
@@ -45,11 +69,11 @@ class CreateClientView(CreateView):
 		context['action'] = reverse('client-new')
 		return context
 
-@login_required
+
 class DetailClientView(DetailView):
 	model = Client
 
-@login_required
+
 class UpdateClientView(UpdateView):
 	model = Client
 
@@ -95,7 +119,6 @@ def createTitleClient(request, client_id):  # from client ID
 	return render(request, 'management/title_form.html', context)
 
 
-@login_required
 class DetailTitleView(DetailView):
 	model = Title
 
@@ -171,3 +194,4 @@ def editProduct(request, product_id):
 		form = EditProductForm(instance=product)
 	context = {'page_title': 'Edit Product', 'title': product.title, 'form': form, 'instance': product}
 	return render(request, 'management/product_form.html', context)
+

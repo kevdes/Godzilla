@@ -1,0 +1,78 @@
+        /************************************************
+        * SPRITE BASED NAVIGATION BAR TECHNIQUE         *
+        * Donwloaded from: http://www.mattvarone.com    *
+        ************************************************/
+        
+        
+        /* TOP NAVIGATION BAR 
+        /////////////////////////////*/
+        
+        ul#topnav {	
+        		width:480px;
+        		list-style:none;
+        		height:40px;
+        		margin:0 auto; /* center nav in this demo */
+        }
+
+        ul#topnav li {
+        		display:inline;
+        }
+
+        ul#topnav li a {
+        		height:40px;
+        		float:left;
+        		text-indent:-9999px;
+        		text-decoration:none;
+        }
+
+        ul#topnav li#topnav-1 a {
+        		width:106px;
+        		background:url(../img/nav.jpg) no-repeat 0 0;
+        }
+
+        ul#topnav  li#topnav-1 a:hover {
+        		background-position:0 -40px;
+        }
+
+        ul#topnav  li#topnav-1 a.current {
+        		background-position:0 -80px;
+        }
+        
+        ul#topnav li#topnav-2 a {
+        		width:116px;
+        		background:url(nav.jpg) no-repeat -106px 0;
+        }
+
+        ul#topnav  li#topnav-2 a:hover {
+        		background-position:-106px -40px;
+        }
+
+        ul#topnav  li#topnav-2 a.current {
+        		background-position:-106px -80px;
+        }
+        
+        ul#topnav li#topnav-3 a {
+        		width:122px;
+        		background:url(nav.jpg) no-repeat -222px 0;
+        }
+
+        ul#topnav  li#topnav-3 a:hover {
+        		background-position:-222px -40px;
+        }
+
+        ul#topnav  li#topnav-3 a.current {
+        		background-position:-222px -80px;
+        }
+        
+        ul#topnav li#topnav-4 a {
+        		width:136px;
+        		background:url(nav.jpg) no-repeat -344px 0;
+        }
+
+        ul#topnav  li#topnav-4 a:hover {
+        		background-position:-344px -40px;
+        }
+
+        ul#topnav  li#topnav-4 a.current {
+        		background-position:-344px -80px;
+        }

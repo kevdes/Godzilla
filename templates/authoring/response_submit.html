@@ -1,0 +1,27 @@
+{% extends "bootstrap/base.html" %}
+{% load customtags %}
+{% block content %}
+<h1>{{title}}</h1>
+
+{% if isSubmitted %}
+
+<div class="alert alert-success">	
+  QA Response emailled to:
+  <ul>
+	{% for email in email_list %}
+	    <li>{{ email }}</li>
+	{% endfor %}
+	</ul>
+
+</div>
+{% else %}
+	<div class="alert alert-warning">	
+	  QA Response Saved - to be completed later.<br />
+	  No email has been sent.	  
+	</div>
+{% endif %}
+
+<a href="{% url "asset-detail" product_id=assetReport.asset.product.id asset_id=assetReport.asset.id %}#{{ assetReport.id }}">Return to asset</a>
+
+
+{% endblock %}

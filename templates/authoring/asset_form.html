@@ -24,9 +24,11 @@
       {%endif%}</td>
   </tr>
 </table>
-<input id="save_asset" class="btn btn-primary btn-sm" type="submit" value="Save" />
-</form>
 
-<a href="{{ instance.get_absolute_url }}">cancel</a>
+<div class="form-actions">
+  <a href="{{ instance.get_absolute_url }}" class="btn btn-sm">Cancel</a>
+  <input id="save_asset" class="btn btn-primary btn-sm" type="submit" value="Save" />
+</div>
+</form>
 
 {% endblock %}

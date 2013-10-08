@@ -1,40 +1,80 @@
 {% extends "bootstrap/base.html" %}
-
+{% load customtags %}
 {% block content %}
-<h2>{{ instance.product }}</h2>
-<h3>{{ instance.name }}</h3>
-asdasd
-<table class="table table-bordered table-condensed">
+<h2>{{ title }}</h2>
+<h3>{{ assetreport.asset.name }}</h3>
 
-<tr>
-    <td><h4>{{ assetreport.status }}</h4></td>
-    <td><div class="text-center">{{ assetreport.getSubmittedText }}</div>
-    </td>
-    <td><div class="text-right ">{{ assetreport.date_updated }}</div></td>
-</tr>
-<tr>
-    <td>QA Disc #{{ assetreport.disc_number|stringformat:"04d" }}</td>
-    <td>Work Order #{{ assetreport.work_order }}</td>
-    <td>{% if assetreport.response_to %}
-            Response to: {{ assetreport.response_to }}
-        {% endif %}
-    </td>
-</tr>
-
-<tr>
-    <td colspan="3"><b>Report:</b>
-    {% if assetreport.contents %}
-    {{ assetreport.contents }}
-    {% endif %}
-    </td>
-</tr>
-{% if forloop.last %}
-<tr>
-    <td colspan="3">
-    </td>
-</tr>
+{% if errorList %}
+    <div class="alert alert-danger">
+        <ul>
+        {% for error in errorList %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </div>
 {% endif %}
+    <table class="table table-bordered table-striped table-condensed">
+    <tr>
+        <td class="span3"><h4>{{ assetreport.status }}</h4></td>
+        <td class="span3"><div class="text-right">{{ assetreport.date_updated }}</div>
+             <div class="text-right">{% if assetreport.full_created_by %}<b>Created by:</b> {{ assetreport.full_created_by }}{% endif %}</div></td>
+    </tr>
+    <tr>
+        <td>QA Disc #{{ assetreport.disc_number|stringformat:"04d" }}</td>
+        <td colspan="2">Work Order #{{ assetreport.work_order }}</td>
+    </tr>    
+        <form action="{{ action }}" method="POST">
+        {% csrf_token %}
+        {{ formset.management_form }}
+    {% for form in formset %}
+    <tr>
+        <td colspan="2">
 
+    <table class="table qa-table-bordered table-condensed"> 
+        <tr>
+            <td colspan="3" class="qa_item">QA ITEM:</td>
+        </tr>
+    <tr>
+        <td class="span2">{{ form.instance.cer_user}}</td>
+        <td class="span3">{{ form.instance.date_created }}</td>
+        <td class="span2"><div class="text-center"><span class="label label-{{ form.instance.severity.color }}">{{ form.instance.severity }}</span></div></td>
+    </tr>
+    {{ form.asset_report }}
+    {{ form.id }}
+    <tr>     
+        <td colspan="3">
+            {{ form.instance.comment }}
+    <tr>
+
+        <tr>
+            <td colspan="3" class="author_response">AUTHOR RESPONSE:</td>
+        </tr>
+        
+        <tr>
+            <td colspan="2">
+                {{ form.response_comment }}
+            </td>
+            <td>Status:
+                {{ form.response_status }}
+            </td>
+        <tr>
+
+    </table>        
+    </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="2">
+        <div class="pull-left"><a href="{% url "asset-detail" product_id=assetreport.asset.product.id asset_id=assetreport.asset.id %}#{{assetreport.id}}" class="btn btn btn-small">Cancel</a></div>
+        <div class="pull-right">
+              <input name="response_continue" class="btn btn-primary btn-small" type="submit" value="Save and Continue Later"/>
+              <input name="response_approve" class="btn btn-success btn-small" type="submit" value="Save and Approve Asset"/>
+              <input name="response_reject" class="btn btn-danger btn-small" type="submit" value="Save and Reject Asset"/>
+        </div>
+    </td>
+    </tr>
+
+        </form>
 
 </table>
 

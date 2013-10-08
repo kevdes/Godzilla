@@ -13,6 +13,7 @@ urlpatterns = patterns('',
 	url(r'^product/(?P<product_id>\d+)/asset/(?P<asset_id>\d+)/report/(?P<report_id>\d+)$', views.report, name='report-detail'),
 	url(r'^testing/$', views.showUnsubmittedTesting, name='testing-submit'),
 	url(r'^testing/(?P<days>\d+)/$', views.showUnsubmittedTesting, name='testing-submit'),
+	url(r'^report/response/(?P<report_id>\d+)/$', views.reportResponse, name='report-response'),
 )
 
 

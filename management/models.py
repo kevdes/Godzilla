@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
+from datetime import timedelta
+from datetime import date
+
 
 class Client(models.Model):
     name = models.CharField('company name', max_length=50)
@@ -22,7 +25,7 @@ class Client(models.Model):
 
 class Title(models.Model):
     client = models.ForeignKey(Client)
-    name = models.CharField('disc title', max_length=50)
+    name = models.CharField('title', max_length=50)
     job_number = models.CharField(max_length=25, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -70,6 +73,19 @@ class Product(models.Model):
             return u'%s %s %s' % (self.title.name, self.product_type.name, self.name)
 
     full_name = property(_get_full_name)
+
+    def date_status(self):
+
+        num_days = self.due_date - date.today()
+        num_days = int(num_days.days)
+        
+        if num_days <= 0:
+            return "reporttext-attention"
+        elif num_days < 3:
+            return "reporttext-progress"
+        else:
+            return ''
+
 
     def get_absolute_url(self):
         return reverse('product-detail', kwargs={'product_id': self.id})

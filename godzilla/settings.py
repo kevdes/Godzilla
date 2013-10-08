@@ -125,10 +125,10 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'management',
     'authoring',
+    'testing',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     'south',
-    'accounts',
     'bootstrap',
     'fontawesome',
     # Uncomment the next line to enable admin documentation:
@@ -165,3 +165,16 @@ LOGGING = {
 }
 
 LOGIN_URL = '/login/'
+
+
+
+# Host for sending email.
+EMAIL_HOST = '172.30.18.11'
+
+# Port for sending email.
+EMAIL_PORT = 25
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
