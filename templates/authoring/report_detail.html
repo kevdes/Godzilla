@@ -35,15 +35,15 @@
             <td colspan="3" class="qa_item">QA ITEM:</td>
         </tr>
     <tr>
-        <td class="span2">{{ form.instance.cer_user}}</td>
-        <td class="span3">{{ form.instance.date_created }}</td>
+        <td class="span2"><b>Submitted by:</b> {{ form.instance.cer_user }}</td>
+        <td class="span3"><div class="text-center">{{ form.instance.date_created }}</div></td>
         <td class="span2"><div class="text-center"><span class="label label-{{ form.instance.severity.color }}">{{ form.instance.severity }}</span></div></td>
     </tr>
     {{ form.asset_report }}
     {{ form.id }}
     <tr>     
         <td colspan="3">
-            {{ form.instance.comment }}
+            {{ form.instance.comment|linebreaks }}
     <tr>
 
         <tr>

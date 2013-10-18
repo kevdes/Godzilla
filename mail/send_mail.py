@@ -7,6 +7,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.core.urlresolvers import reverse
 
 from datetime import datetime
+import re
+import cgi
 
 FROM_EMAIL = 'aus.dvd.authoring@bydeluxe.com)'
 SUBJECT_PREFIX = '[godzilla] '
@@ -104,13 +106,13 @@ def text_msg_items(reportInfo, showResponse):
 	#	text_msg += 'Item #' + str(num_items) + '\n'
 		text_msg += 'Submitted by: ' + str(item.cer_user) + '\n'
 		text_msg += 'Severity: ' + str(item.severity) + '\n'
-		text_msg += 'Comment: ' + str(item.comment) + '\n\n'
+		text_msg += 'Comment: ' + str(item.comment.encode("utf8")) + '\n\n'
 
 		if showResponse:
 			text_msg += 'AUTHOR RESPONSE:\n'
 			text_msg += 'Submitted by: ' + str(item.response_user) + '\n'
 			text_msg += 'Status: ' + str(item.response_status) + '\n'
-			text_msg += 'Comment: ' + str(item.response_comment) + '\n\n'
+			text_msg += 'Comment: ' + str(item.response_comment.encode("utf8")) + '\n\n'
 
 		num_items += 1
 
@@ -229,7 +231,7 @@ def html_msg_items(reportInfo, showResponse):
 		#html_msg += ' border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #CCCCCC; \n'
 		html_msg += ' margin-bottom: 10px">\n'		
 		html_msg += '		  <p>\n'
-		html_msg += 		  str(item.comment).replace('\n', '<br>') + '\n'
+		html_msg += 		  format_html_comments(item.comment) + '\n'
 		html_msg += '		 </p></td>\n'
 		html_msg += '		 </tr>\n'
 
@@ -241,7 +243,7 @@ def html_msg_items(reportInfo, showResponse):
 				html_msg += '		       <span style="color: #FF0000; font-weight: bold;">\n'
 			elif str(item.response_status) == 'Fixed - retest required':
 				html_msg += '		       <span style="color: #FF6600; font-weight: bold;">\n'
-			elif str(item.response_status) == 'Acceptable':
+			elif str(item.response_status) == 'Acceptable' or str(item.response_status) == 'Pass' or str(item.response_status) == 'Fixed - author approved':
 				html_msg += '		       <span style="color: #009933; font-weight: bold;">\n'
 			else:
 				html_msg += '<span>\n'
@@ -254,7 +256,7 @@ def html_msg_items(reportInfo, showResponse):
 			html_msg += '		 <td valign="top" style="border-left-width: 1px;\n'
 			html_msg += '		 border-left-style: solid; border-left-color: #FFFFFF;">\n'
 			html_msg += '		 <p><strong>Author response:</strong></p>\n'
-			html_msg += '		 ' + str(item.response_comment).replace('\n', '<br>') + '\n'
+			html_msg += '		 ' + format_html_comments(item.response_comment) + '\n'
 			html_msg += '		 </td>\n'
 			html_msg += '		 </tr>\n'
 
@@ -272,6 +274,12 @@ def html_msg_items(reportInfo, showResponse):
 	html_msg += '		</table>\n'
 	html_msg += '<p>&nbsp;</p>\n'
 	return html_msg
+
+def format_html_comments(comments):
+	comments = cgi.escape(comments).encode('ascii', 'xmlcharrefreplace')
+	html_comments = re.compile(r'(((\d+:\d+:\d+)|(\d+.\d+.\d+)|(\d+:\d+)|(\d+.\d+)\s*?)+)', re.I).sub(r'<b>\1</b>', comments)
+	html_comments = html_comments.replace('\n', '<br />\n')
+	return html_comments
 
 def html_asset_status(reportInfo):
 	html_msg = '	<table width="100%" border="0" cellpadding="6" cellspacing="0">\n'

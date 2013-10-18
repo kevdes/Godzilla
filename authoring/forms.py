@@ -2,7 +2,7 @@ from django import forms
 from django.forms.models import BaseFormSet, formset_factory, inlineformset_factory
 
 from management.models import Product
-from authoring.models import Asset, AssetReportStatus, AssetReport, ReportItemResponse
+from authoring.models import Asset, AssetReportStatus, AssetReport
 from testing.models import ReportItem
 
 class AssetForm(forms.ModelForm):
@@ -74,18 +74,3 @@ class showTesting(forms.ModelForm):
 		model = AssetReport
 
 
-class ReportResponseForm(forms.ModelForm):
-
-	class Meta:
-		model = ReportItemResponse
-		exclude = ['user_created', ]
-
-	"""
-	def __init__(self, *args, **kwargs):
-		report_id = kwargs.pop('report_id')
-		super(ReportResponseForm, self).__init__(*args, **kwargs)
-		self.prefix = report_id
-	"""
-
-
-ReportResponseFormset = inlineformset_factory(ReportItem, ReportItemResponse, ReportResponseForm, can_delete=False, extra=1, max_num=10)

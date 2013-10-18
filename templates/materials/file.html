@@ -1,0 +1,276 @@
+{% extends "bootstrap/base.html" %}
+
+{% block extra_head %}
+<script type='text/javascript'>
+// when the DOM is ready
+$(window).bind("load", function()  {
+  var img = new Image();
+  var factor = 3;
+  var isError = false;
+  var timeout = setTimeout(function() {
+    // wrap our new image in jQuery, then:
+    $(img)
+      // once the image has loaded, execute this code
+      .load(function () {
+        // set the image hidden by default    
+        $(this).hide();
+        $(this).attr("id","grab");
+
+        // with the holding div #loader, apply:
+        $('#loader')
+          // remove the loading class (so no background spinner), 
+          .removeClass('loading')
+          // then insert our image
+          .append(this);
+    
+        // fade our image in to create a nice effect
+        $(this).fadeIn();
+      })
+    
+      // if there was an error loading the image, react accordingly
+      .error(function () {
+        // notify the user that the image could not be loaded
+      })
+    
+      // *finally*, set the src attribute of the new image to our image
+      .attr('src', '{{ thumbnail }}');
+    }, {% if thumbnail_exists %}0{% else %}1500{% endif %});
+
+    $(img).load( function() {
+        if ( isError == false) {
+        $('#loader').animate({
+          height: img.height/factor,
+          width: img.width/factor,
+        }, 500);
+     }
+   });
+
+    $(img)
+        .error(function () {
+        // notify the user that the image could not be loaded
+            $(img).attr('src', '/static/img/not_found.gif');
+            $('#loader').animate({
+                height: 18,
+                width: 17,
+            }, 500);
+            isError = true;
+      })
+
+    $(img).click(function() {
+        if ( isError == false) {
+            if ($('#loader').height() != img.naturalHeight) {
+                $('#loader').animate({
+                    height: img.naturalHeight,
+                    width: img.naturalWidth,
+                }, 500);
+            }
+            else {
+                $('#loader').animate({
+                  height: img.height/factor,
+                  width: img.width/factor,
+                }, 500);
+            }
+        }
+    });
+
+    $('#get_aspect').click(function(){
+          $('#get_aspect').hide();
+          $('#aspect').prepend('<img src="/static/img/loader.gif" />');
+          $.ajax({
+                   type: "POST",
+                   url: "{% url "get_aspect" %}",
+                   data: {'filename': $(this).attr('name'), 'duration': $(this).attr('duration'), 'width': $(this).attr('width'), 'height': $(this).attr('height'), 'csrfmiddlewaretoken': '{{csrf_token}}'},
+                   dataType: "json",
+                   success: function(response) {
+                          $('#aspect').text(response.aspect); 
+                          $('#aspect').attr("class",response.css_class);
+                          $('#info_table tr:last').after('<tr><td><b>Crop:</b></td><td>'+response.crop+'</td></tr>');
+                    },
+                    error: function(rs, e) {
+                           $('#aspect').text("Error"); 
+                           $('#aspect').attr("class","red-tooltip");
+                        //alert(rs.responseText);
+                    }
+              }); 
+    });
+
+    $(document).ready(function() {
+      $('[rel=tooltip]').tooltip({ placement: 'right', html: 'true'});
+    });
+
+});
+</script>
+
+{% endblock extra_head %}
+
+{% load breadcrumbs %}
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+    <!-- <li><a href="{% url "home" %}">Home</a></li> -->
+    {% breadcrumb "Directory test" %}
+    </ul>  
+{% endblock %}
+
+{% load customtags %}
+{% load staticfiles %}
+
+{% block content %}
+
+<h2>{{ page_title }}</h2>
+
+<p><i class="icon-folder-open-alt"></i> {% split_directory return_path False %}</p>
+
+
+
+<h3><i class="icon-film"></i> {{ listing.2 }}</h3>
+<h4>Preview</h4>
+<div id="loader" class="loading"></div>
+<br />
+<h4>Video</h4>
+
+<!-- {% bold_headings file_infoo.videoInfo %} -->
+
+<table>
+  <tr>
+    <td class="cell_top">
+        <table class="table-striped table-condensed" id="info_table">
+
+            <tr>
+                <td><b>Duration: </b></td>
+                <td>{{ file_info.txtDuration }}</td>
+            </tr>
+            <tr>
+                <td><b>Start T/C:</b> </td>
+                <td>{{ file_info.newSourceTC }}</td>
+            </tr>
+            <tr>
+                <td><b>File size:</b></td>
+                <td>{{ file_info.file_size }}</td>
+            </tr>
+            <tr>
+                <td><b>File created: </b></td>
+                <td>{{ file_info.file_created|date:"D d M Y, h:i A" }}</td>
+            </tr>
+            <tr>
+                <td><b>File modified: </b></td>
+                <td>{{ file_info.file_modified|date:"D d M Y, h:i A" }}</td>
+            </tr>
+            {% with validate=file_info.validate_checksum %}
+            <tr>
+                <td><b>Checksum: </b></td>
+                <td>{{ validate.2 }}
+                     <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                </td>
+            </tr>
+            {% endwith %}
+            <tr>
+                <td><b>Aspect ratio: </b></td>
+                <td><div id="aspect"><a id="get_aspect" name="{{ filename }}" height="{{ file_info.resHeight }}" width="{{ file_info.resWidth }}" duration="{{ file_info.duration }}">Guess aspect</a></div>
+                </td>
+            </tr>
+         </table>
+    </td>
+    <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+    <td>
+       <table class="table-striped table-condensed">
+        <tr>
+            <td><b>Codec:</b></td>
+            <td>{{ file_info.codec }}</td>
+            <td>{% with validate=file_info.validate_codec %}
+                 <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                 {% endwith %}
+             </td>
+        </tr>
+        <tr>
+            <td><b>Resolution: </b></td>
+            <td>{{ file_info.resolution }}</td>
+            <td>{% with validate=file_info.validate_resolution %}
+                 <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                 {% endwith %}</td>
+        </tr>
+        <tr>
+            <td><b>Framerate: </b></td>
+            <td>{{ file_info.txtFramerate }}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><b>Fields: </b></td>
+            <td>{{ file_info.field_type }} ({{ file_info.field_order }}) </td>
+            <td> {% with validate=file_info.validate_fields %}
+                 <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                 {% endwith %}
+             </td>
+        </tr>
+        <tr>
+            <td><b>Colorspace:</b></td>
+            <td>{{ file_info.color_space }} {% if file_info.gamma %}({{ file_info.gamma }} Gamma){% endif %}</td>
+            <td>{% with validate=file_info.validate_color_space %}
+                 <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                 {% endwith %}
+             </td>
+        </tr>
+        <tr>
+            <td><b>Pasp: </b></td>
+            <td>{{ file_info.pasp }}</td>
+            <td>{% with validate=file_info.validate_pasp %}
+                 <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                 {% endwith %}</td>
+        </tr>
+        <tr>
+            <td><b>Clap: </b></td>
+            <td>{{ file_info.clap }}</td>
+            <td>{% with validate=file_info.validate_clap %}
+                 <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                 {% endwith %}</td>
+        </tr>
+        <tr>
+            <td class="cell_top"><b>Tapt: </b></td>
+            <td>Clean: {{ file_info.clean_aperture }}<br />
+                Production: {{ file_info.prod_aperture }}<br />
+                Encoded: {{ file_info.enc_aperture }}<br />
+            </td>
+            <td>{% with validate=file_info.validate_tapt %}
+                 <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+                 {% endwith %}
+             </td>
+        </tr>
+    </table>
+    </td>
+</tr>
+</table>
+
+
+
+<h4>Audio
+{% with validate=file_info.validate_num_audio_tracks %}
+    <i class="{{ validate.0 }}" rel="tooltip" title="{{ validate.1 }}"></i>
+{% endwith %}</h4>
+
+<table class="table-striped table-condensed">    
+{% for audio_track in file_info.audio_tracks %}
+    <tr>
+        <td><b>Track {{ forloop.counter }}:</b> {{ audio_track.track_assignment }}</td>
+        <td><i class="{{ audio_track.validate.0 }}" rel="tooltip" title="{{ audio_track.validate.1 }}"></i>
+        </td>
+    <tr>
+    <tr>
+        <td colspan="2">
+            Channels: {{ audio_track.channels }} &nbsp;
+            Bitrate: {{ audio_track.codec }} &nbsp;
+            Sample Rate: {{ audio_track.sample_rate }}<br />&nbsp;
+        </td>
+{% endfor %}
+</table>
+
+<!-- {{ file_info.audioInfoo|linebreaks }} -->
+
+{% endblock %}
+
+{% block side_bar %}
+<div class="headerbox">
+    <h2><small>title</small></h2>
+</div>
+<div class="rectanglebox">
+    <p>yo</p>
+</div>
+{% endblock %}

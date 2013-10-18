@@ -6,9 +6,6 @@ from authoring.models import Asset
 from authoring.models import AssetReport
 from authoring.models import AssetReportStatus
 from authoring.models import ActionButton
-from authoring.models import ReportResponseStatus
-from authoring.models import ReportItemResponse
-
 
 
 class AssetTypeAdmin(admin.ModelAdmin):
@@ -39,5 +36,3 @@ admin.site.register(Asset, AssetAdmin)
 admin.site.register(AssetReport, AssetReportAdmin)
 admin.site.register(AssetReportStatus, AssetReporStatusAdmin)
 admin.site.register(ActionButton)
-admin.site.register(ReportResponseStatus)
-admin.site.register(ReportItemResponse)

@@ -7,9 +7,7 @@ from django.db.models.query import EmptyQuerySet
 
 from testing.models import CentralUser
 from testing.models import ReportItem
-from authoring.models import AssetReport, ReportItemResponse
-
-from authoring.forms import ReportResponseFormset, ReportResponseForm
+from authoring.models import AssetReport
 
 class ChoiceLabelWidget(forms.Widget):
 	def render(self, name, value, attrs):
@@ -81,7 +79,7 @@ class ReportResponseForm(forms.ModelForm):
 	
 	def __init__(self, *args, **kwargs):
 		super(ReportResponseForm, self).__init__(*args, **kwargs) # Call to ModelForm constructor
-		self.fields['response_comment'].widget.attrs['cols'] = 70
+		self.fields['response_comment'].widget.attrs['cols'] = 65
 		self.fields['response_comment'].widget.attrs['rows'] = 6
 
 

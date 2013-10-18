@@ -4,7 +4,6 @@ from django.contrib import admin
 
 from management import views
 
-
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -13,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^management/', include('management.urls')),
     url(r'^authoring/', include('authoring.urls')),
     url(r'^testing/', include('testing.urls')),
+    url(r'^materials/', include('materials.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^login/$', views.loginPage, name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/login/'}),

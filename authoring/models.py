@@ -153,7 +153,7 @@ class AssetReport(models.Model):
 				elif str(assetReportItem.response_status) == 'Fixed - retest required' or str(assetReportItem.response_status) == 'To be fixed':
 					status_class = 'progress'
 					break
-				elif str(assetReportItem.response_status) == 'Acceptable':
+				elif str(assetReportItem.response_status) == 'Acceptable' or str(assetReportItem.response_status) == 'Pass' or str(assetReportItem.response_status) == 'Author Approved':
 					status_class = 'success'
 		return status_class
 
@@ -181,26 +181,6 @@ class AssetReport(models.Model):
 		verbose_name_plural = 'asset report'
 		get_latest_by = 'date_updated'
 
-
-class ReportResponseStatus(models.Model):
-	name = models.CharField('status name', max_length=50)
-	color = models.CharField('class color', max_length=20, blank=True)
-	display_order = models.IntegerField(default=1)
-
-	def __unicode__(self):
-		return self.name
-
-
-class ReportItemResponse(models.Model):
-	report_item = models.ForeignKey(ReportItem)
-	comment = models.TextField()
-	status = models.ForeignKey(ReportResponseStatus)
-	user_created = models.ForeignKey(User)
-	date_created = models.DateTimeField(auto_now_add=True)
-	
-	def __unicode__(self):
-		return self.comment
-	
 
 class ActionButton(models.Model):
 	name = models.CharField(max_length=50)

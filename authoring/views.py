@@ -12,11 +12,11 @@ from django.utils import timezone
 from datetime import datetime
 
 
-from authoring.forms import AssetForm, AssetFormSet, EditAssetForm, CreateAssetReportForm, CreateBareAssetReportForm, ReportResponseForm, ReportResponseFormset
+from authoring.forms import AssetForm, AssetFormSet, EditAssetForm, CreateAssetReportForm, CreateBareAssetReportForm
 from testing.forms import ReportItemForm, ReportFormSet, ReportItemFormset
 
 from management.models import Product
-from authoring.models import Asset, AssetStatus, AssetType, AssetReport, AssetReportStatus, ReportItemResponse
+from authoring.models import Asset, AssetStatus, AssetType, AssetReport, AssetReportStatus
 from testing.models import ReportItem
 
 from mail.send_mail import send_QA_response
@@ -193,7 +193,7 @@ def editReport(request, product_id, asset_id, report_id):
 			else:
 				return HttpResponseRedirect(reverse('asset-detail', kwargs={'product_id': assetReport.asset.product.id, 'asset_id': assetReport.asset.id})+'#'+ str(assetReport.id))
 	else:        
-		form = CreateAssetReportForm(instance=assetReport)
+		form = CreateAssetReportForm(instance=assetReport, initial={'status': assetReport.asset.status})
 	context = {'page_title': 'Edit Asset Report', 'title': assetReport.asset.product_id, 'form': form, 'instance': assetReport.asset, 'returnPage': returnPage}
 	return render(request, 'authoring/report_form.html', context)
 
@@ -288,8 +288,8 @@ def reportResponse(request, report_id):
 				isSubmitted = True
 				title = 'QA Response Submitted'
 			else:
-				#email_list = []
-				email_list = send_QA_response(assetReport.id)
+				email_list = []
+				#email_list = send_QA_response(assetReport.id)  #send email DEBUG
 				isSubmitted = False
 				title = 'QA Response Saved'
 

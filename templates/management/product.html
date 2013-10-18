@@ -19,12 +19,15 @@ $(document).ready(function() {
    </script>
 {% endblock extra_head %}
 
+{% load customtags %}
+
 {% load breadcrumbs %}
 {% block breadcrumbs %}
     <ul class="breadcrumb">
     <!-- <li><a href="{% url "home" %}">Home</a></li> -->
     {% breadcrumb_url product.title.client "client-detail" product.title.client.id %}
     {% breadcrumb_url product.title "title-detail" product.title.id %}
+    {% breadcrumb "Product" %}
     </ul>  
 {% endblock %}
 
@@ -118,13 +121,13 @@ $(document).ready(function() {
                                 <td colspan="3" class="qa_item">QA ITEM:</td>
                             </tr>
                         <tr>
-                            <td class="span2">{{ item.cer_user }}</td>
-                            <td class="span3">{{ item.date_created }}</td>
+                            <td class="span2"><b>Submitted by:</b> {{ item.cer_user }}</td>
+                            <td class="span3"><div class="text-center">{{ item.date_created }}</div></td>
                             <td class="span2"><div class="text-center"><span class="label label-{{ item.severity.color }}">{{ item.severity }}</span></div></td>
                         </tr>
                         <tr>                
                             <td colspan="3">                                
-                                {{ item.comment|linebreaks }}</td>
+                                {% bold_timecode item.comment|linebreaks %}</td>
                         </tr>
 
 
@@ -140,7 +143,7 @@ $(document).ready(function() {
 
                         <tr>
 
-                            <td colspan="3">{{ item.response_comment }}</td>
+                            <td colspan="3">{% bold_timecode item.response_comment|linebreaks %}</td>
                         <tr>
                         {% else %}
                         <tr>

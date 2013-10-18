@@ -9,6 +9,10 @@
   font-weight: bold;
 }
 
+.gray {
+  color: #666666;
+}
+
 .headerbox {
   padding: 0px 4px 8px 4px;
   background-color: #026108;
@@ -29,8 +33,30 @@
           background-clip: padding-box;
 }
 
+DIV#loader {
+  border: 1px solid #ccc;
+  width: 384px;
+  height:216px;
+}
+
+/** 
+ * While we're having the loading class set.
+ * Removig it, will remove the loading message
+ */
+DIV#loader.loading {
+  background: url(../img/loader.gif) no-repeat center center;
+}
+
+DIV#aspect.loading {
+  background: url(../img/loader.gif) no-repeat;
+}
+
 .hiddenRow {
     padding: 0 !important;
+}
+
+.cell_top {  
+  vertical-align: top;
 }
 
 .table tbody tr > td.success {
@@ -365,3 +391,15 @@
 .panel-info > .panel-footer + .panel-collapse .panel-body {
   border-bottom-color: #bce8f1;
 }
+
+.red-tooltip { color: #cc0000; }
+.red-tooltip + .tooltip > .tooltip-inner {background-color: #cc0000;}
+.red-tooltip + .tooltip > .tooltip-arrow {border-right-color: #cc0000 !important;}
+
+.green-tooltip { color: #089900; }
+.green-tooltip + .tooltip > .tooltip-inner {background-color: #089900;}
+.green-tooltip + .tooltip > .tooltip-arrow {border-right-color: #089900 !important;}
+
+.orange-tooltip { color: #DE7E00; }
+.orange-tooltip + .tooltip > .tooltip-inner {background-color: #DE7E00;}
+.orange-tooltip + .tooltip > .tooltip-arrow {border-right-color: #DE7E00 !important;}

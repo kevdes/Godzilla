@@ -1,0 +1,44 @@
+{% extends "bootstrap/base.html" %}
+
+{% load breadcrumbs %}
+{% block breadcrumbs %}
+    <ul class="breadcrumb">
+    <!-- <li><a href="{% url "home" %}">Home</a></li> -->
+    {% breadcrumb "Directory test" %}
+    </ul>  
+{% endblock %}
+
+{% load customtags %}
+{% block content %}
+
+<h2>{{ page_title }}</h2>
+
+<p>Go to: <a href="?path=SAN">SAN</a> | <a href="?path=DROPBOX">DROPBOX</a></p>
+
+&nbsp;<i class="icon-chevron-down"></i> &nbsp;{% split_directory listing.0 %}<br />
+<ul class="icons">
+    {% if listing.2 %}
+        <li><i class="icon-folder-open-alt"></i> <a href="?path={{ listing.2|fix_amper }}">..</a></li>
+    {% endif %}
+    {% for directory in listing.3 %}
+        <li><i class="icon-folder-open-alt"></i> <a href="?path={{ listing.0|fix_amper }}\{{ directory|fix_amper }}">{{ directory }}</a></li>
+    {% endfor %}
+</ul>
+
+<ul class="icons">
+    {% for files in listing.4 %}
+        <li><i class="icon-film"></i> <a href="{% url "show_file" %}?file={{ listing.0|fix_amper }}\{{ files|fix_amper }}">{{ files }}</a></li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}
+
+{% block side_bar %}
+<div class="headerbox">
+    <h2><small>title</small></h2>
+</div>
+<div class="rectanglebox">
+    <p>yo</p>
+</div>
+{% endblock %}

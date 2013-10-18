@@ -5346,7 +5346,7 @@ input[type="submit"].btn.btn-mini {
   position: absolute;
   z-index: 1030;
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.4;
   opacity: 0;
   filter: alpha(opacity=0);
@@ -5395,7 +5395,7 @@ input[type="submit"].btn.btn-mini {
   width: 0;
   height: 0;
   border-color: transparent;
-  border-style: solid;
+  border-style: solid;.
 }
 
 .tooltip.top .tooltip-arrow {
