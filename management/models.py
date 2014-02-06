@@ -80,9 +80,9 @@ class Product(models.Model):
         num_days = int(num_days.days)
         
         if num_days <= 0:
-            return "reporttext-attention"
-        elif num_days < 3:
             return "reporttext-progress"
+        elif num_days < 3:
+            return "reporttext-attention"
         else:
             return ''
 

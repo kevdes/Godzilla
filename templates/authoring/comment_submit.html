@@ -1,0 +1,19 @@
+{% extends "bootstrap/base.html" %}
+{% load customtags %}
+{% block content %}
+<h1>{{title}}</h1>
+
+<div class="alert alert-success">	
+  Comment emailled to:
+  <ul>
+	{% for email in email_list %}
+	    <li>{{ email }}</li>
+	{% endfor %}
+	</ul>
+
+</div>
+
+<a href="{% url "asset-detail" product_id=assetReport.asset.product.id asset_id=assetReport.asset.id %}#{{ assetReport.id }}">Return to asset</a>
+
+
+{% endblock %}

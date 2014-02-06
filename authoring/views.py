@@ -19,7 +19,7 @@ from management.models import Product
 from authoring.models import Asset, AssetStatus, AssetType, AssetReport, AssetReportStatus
 from testing.models import ReportItem
 
-from mail.send_mail import send_QA_response
+from mail.send_mail import send_QA_response, send_comment
 
 # Create your views here.
 @login_required
@@ -143,13 +143,20 @@ def createReport(request, product_id, asset_id):
 					completed = True,
 					submitted = True,
 					created_by = request.user,
-					submitted_by = request.user					
+					submitted_by = request.user
 				)
 				if asset.status == AssetStatus.objects.get(status='New'):
 					asset.status = AssetStatus.objects.get(status='In Progress')
 					asset.save()
 			# Always redirect after a POST
-			return HttpResponseRedirect(reverse('asset-detail', kwargs={'product_id': asset.product.id, 'asset_id': asset.id})+'#'+ str(assetReport.id))
+			#return HttpResponseRedirect(reverse('asset-detail', kwargs={'product_id': asset.product.id, 'asset_id': asset.id})+'#'+ str(assetReport.id))
+
+			#send email
+			email_list = send_comment(assetReport.id)
+			title = 'Comment Posted'
+
+			context = {'title': title, 'email_list': email_list, 'assetReport': assetReport }
+			return render(request, 'authoring/comment_submit.html', context)
 		else:        
 			form = CreateBareAssetReportForm(initial={'product': asset.product_id, 'asset_type': asset.asset_type, 'status': reportStatus})
 			#form.initial['asset'] = asset.pk

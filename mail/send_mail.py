@@ -27,11 +27,13 @@ def send_QA_report(report_id):
 	reportInfo['email_list'].append('aus.dvd.authoring@bydeluxe.com')
 
 	text_msg  = text_msg_intro(reportInfo, 'QA REPORT')
+	text_msg  = text_msg_qarequest(reportInfo)
 	text_msg += text_msg_items(reportInfo, False)
 	text_msg += text_msg_outro(reportInfo)
 
 
 	html_msg = html_msg_intro(reportInfo, 'QA REPORT')
+	html_msg = html_msg_qarequest(reportInfo)
 	html_msg += html_web_link(reportInfo, True)
 
 	# html_msg += '<p><b>Notes:</b>' + reportInfo['qa_notes'] + '</p>\n'
@@ -55,11 +57,13 @@ def send_QA_response(report_id):
 	#reportInfo['email_list'].append('aus.ms.cer@bydeluxe.com')
 
 	text_msg  = text_msg_intro(reportInfo, 'QA AUTHOR RESPONSE')
+	text_msg  = text_msg_qarequest(reportInfo)
 	text_msg += text_msg_items(reportInfo, True)
 	text_msg += text_msg_outro(reportInfo)
 
 
 	html_msg = html_msg_intro(reportInfo, 'QA AUTHOR RESPONSE')
+	html_msg = html_msg_qarequest(reportInfo)
 	html_msg += html_web_link(reportInfo, False)
 	
 	html_msg += html_asset_status(reportInfo)
@@ -80,6 +84,31 @@ def send_QA_response(report_id):
 
 	return reportInfo['email_list']
 
+def send_comment(report_id):
+	reportInfo = getReportInfo(report_id)
+	reportInfo['email_list'].append('aus.dvd.authoring@bydeluxe.com')
+	#reportInfo['email_list'].append('aus.ms.cer@bydeluxe.com')
+
+	text_msg  = text_msg_intro(reportInfo, 'ASSET COMMENT')
+	text_msg += text_msg_outro(reportInfo, 'comment')
+
+
+	html_msg = html_msg_intro(reportInfo, 'ASSET COMMENT')
+	#html_msg += html_web_link(reportInfo, False, 'comment')
+
+	html_msg += '<p><b>Notes:</b>' + reportInfo['qa_notes'] + '</p>\n'
+
+	html_msg += html_msg_outro(reportInfo, False, 'comment')
+
+
+	text_content = text_msg
+	html_content = html_msg
+	subject = 'COMMENT: ' + reportInfo['title'] + ' ' + reportInfo['description'] + ' ' + reportInfo['product_type'] + ' / ' + reportInfo['asset_name']
+
+	send_email(subject, reportInfo['email_list'], text_content, html_content)
+
+	return reportInfo['email_list']
+
 def text_msg_intro(reportInfo, subject):
 
 	text_msg = reportInfo['product_type'] + ' ' + subject +'\n\n'
@@ -87,7 +116,10 @@ def text_msg_intro(reportInfo, subject):
 	text_msg += reportInfo['title'] + ' ' + reportInfo['description'] + ' ' + reportInfo['product_type'] + '\n'
 	text_msg += reportInfo['asset_name'] + '\n\n'
 
-	text_msg += 'QA REQUEST:\n'
+	return text_msg
+
+def text_msg_qarequest(reportInfo):
+	text_msg = 'QA REQUEST:\n'
 	text_msg += '---------------\n\n'
 	text_msg += 'QA Disc #' + reportInfo['qa_disc'] + ' / ' + 'Work Order #' + reportInfo['work_order'] + '\n'
 	text_msg += 'Created by: ' + reportInfo['created_by'] + '\n\n'
@@ -118,10 +150,10 @@ def text_msg_items(reportInfo, showResponse):
 
 	return text_msg
 
-def text_msg_outro(reportInfo):
+def text_msg_outro(reportInfo, itemName='report'):
 	text_msg = 'Go to ' 
 	text_msg += WEBSITE_ADDRESS + reverse('asset-detail', kwargs={'product_id': reportInfo['product_id'], 'asset_id': reportInfo['asset_id']})+'#'+ str(reportInfo['report_id']) + ' '
-	text_msg += 'to view report.\n\n'
+	text_msg += 'to view '+itemName+'.\n\n'
 
 	return text_msg
 
@@ -142,7 +174,11 @@ def html_msg_intro(reportInfo, subject):
 	html_msg += '    	<p style="color: #666666; font-size: 18px; font-weight: bold;">\n'
 	html_msg += 		reportInfo['asset_name'] + '\n'
 	html_msg += '	    </p>\n'
-	html_msg += '	    <table width="100%" border="0" cellpadding="6" cellspacing="0" \n'
+
+	return html_msg
+
+def html_msg_qarequest(reportInfo):
+	html_msg = '	    <table width="100%" border="0" cellpadding="6" cellspacing="0" \n'
 	html_msg += '	     bordercolor="#006600" style="border-width: 1px; \n'
 	html_msg += '	     border-style: solid; border-color: #006600;">\n'
 	html_msg += '          <tr bgcolor="#006600">\n'
@@ -165,17 +201,17 @@ def html_msg_intro(reportInfo, subject):
 
 	return html_msg
 
-def html_web_link(reportInfo, canRespond):
+def html_web_link(reportInfo, canRespond, itemName='report'):
 
 	html_msg = '		<p><a href="' + WEBSITE_ADDRESS + reverse('asset-detail', kwargs={'product_id': reportInfo['product_id'], 'asset_id': reportInfo['asset_id']})+'#'+ str(reportInfo['report_id']) + '">Click here</a>\n'
 	if canRespond:
-		html_msg += ' 		to view and respond to report.</p>\n' 
+		html_msg += ' 		to view and respond to ' + itemName + '.</p>\n' 
 	else:
-		html_msg += ' 		to view report.</p>\n' 
+		html_msg += ' 		to view ' + itemName + '.</p>\n' 
 
 	return html_msg
 
-def html_msg_outro(reportInfo, canRespond):
+def html_msg_outro(reportInfo, canRespond, itemName='report'):
 
 	#html_msg = '	</td>\n'
 	html_msg = '<p>&nbsp;</p>\n'
